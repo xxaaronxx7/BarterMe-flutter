@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "773558562996",
+    "project_id": "barterme-bf243",
+    "storage_bucket": "barterme-bf243.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:773558562996:android:edac7e626abcd5c24c27e1",
+        "android_client_info": {
+          "package_name": "com.example.emart_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "773558562996-ugmv2q96o2rrescbj5nkbdqnc6om4lr3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.emart_app",
+            "certificate_hash": "5b8d3d7955c4d1405818a6ac91b6d27f796fa4f6"
+          }
+        },
+        {
+          "client_id": "773558562996-eqb13rmkv6it652uakcgg12o4gf4s0il.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBv0jC1SwxZ94B4iOrEK8IicDjWeauxgDM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "773558562996-eqb13rmkv6it652uakcgg12o4gf4s0il.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,76 @@
+{
+    "categories": [
+        {
+            "name" : "Women's Dress",
+            "subcategory": [
+                "Tops and Sets",
+                "Watches",
+                "Shorts and Pants"
+            ]
+        },
+        {
+            "name" : "Men's Clothing & Fashion",
+            "subcategory": [
+                "Shirts & Casual wear",
+                "Formal wear",
+                "Accessories"
+            ]
+        },
+        {
+            "name" : "Computer & Accessories",
+            "subcategory": [
+                "Laptop",
+                "Computer",
+                "Tech accessories"
+            ]
+        },
+        {
+            "name" : "Automobile",
+            "subcategory": [
+                "Cars",
+                "Motorcycle",
+                "bikes"
+            ]
+        },
+        {
+            "name" : "Kids & Toys",
+            "subcategory": [
+                "Shoes & Bags",
+                "Baby Clothing",
+                "Outdoor"
+            ]
+        },
+        {
+            "name" : "Sports",
+            "subcategory": [
+                "Indoor toys",
+                "Sports & Outdoor",
+                "Educational toys"
+            ]
+        },
+        {
+            "name" : "Jewelry",
+            "subcategory": [
+                "Necklace & Bracelets",
+                "Earings",
+                "Gold"
+            ]
+        },
+        {
+            "name" : "Mobile Phone & Tablet",
+            "subcategory": [
+                "Smartphone",
+                "Tablet",
+                "Accessories"
+            ]
+        },
+        {
+            "name" : "Others",
+            "subcategory": [
+                "Essentials",
+                "Home Appliances & Equipment",
+                "Pets & items"
+            ]
+        }
+    ]
+}
