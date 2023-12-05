@@ -2,16 +2,20 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emart_app/consts/consts.dart';
+import 'package:emart_app/controllers/home_controller.dart';
 import 'package:emart_app/models/category_model.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
 
 class ProductController extends GetxController {
   var quantity = 0.obs;
   var subcat = [];
   var isFav = false.obs;
+  var isLoading = false.obs;
 
   var inameController = TextEditingController();
   var ilocationController = TextEditingController();
@@ -23,6 +27,7 @@ class ProductController extends GetxController {
   var categoryList = <String>[].obs;
   var subcategoryList = <String>[].obs;
   List<Category> category = [];
+  var iImagesListLinks = [];
   var iImagesList = RxList<dynamic>.generate(3, (index) => null);
 
   var categoryValue = ''.obs;
@@ -64,6 +69,41 @@ class ProductController extends GetxController {
     } catch (e) {
       VxToast.show(context, msg: e.toString());
     }
+  }
+
+  uploadImages() async {
+    iImagesListLinks.clear();
+    for (var item in iImagesList) {
+      if (item != null) {
+        var filename = basename(item.path);
+        var destination = 'images/users/${currentUser!.uid}/$filename';
+        Reference ref = FirebaseStorage.instance.ref().child(destination);
+        await ref.putFile(item);
+        var n = await ref.getDownloadURL();
+        iImagesListLinks.add(n);
+      }
+    }
+  }
+
+  uploadItem(context) async {
+    var store = firestore.collection(productsCollection).doc();
+    await store.set({
+      'p_category': categoryValue.value,
+      'p_subcatergory': subcategoryValue.value,
+      'p_imgs': FieldValue.arrayUnion(iImagesListLinks),
+      'p_minelist': FieldValue.arrayUnion([]),
+      'p_desc': idescController.text,
+      'p_name': inameController.text,
+      'p_quantity': iquantityController.text,
+      'p_itemcondition': iItemconditionController.text,
+      'p_location': ilocationController.text,
+      'p_availability': iavailabilityController.text,
+      'p_seller': Get.find<HomeController>().userId,
+      'vendor_id': currentUser!.uid,
+    });
+    isLoading(false);
+
+    VxToast.show(context, msg: "Item Uploaded");
   }
 
   getSubCategories(title) async {

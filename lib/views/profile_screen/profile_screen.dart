@@ -5,6 +5,9 @@ import 'package:emart_app/controllers/auth_controller.dart';
 import 'package:emart_app/controllers/profile_controller.dart';
 import 'package:emart_app/services/firestore_services.dart';
 import 'package:emart_app/views/auth_screen/login_screen.dart';
+import 'package:emart_app/views/chat_screen/messaging_screen.dart';
+import 'package:emart_app/views/minelist_screen/minelist_screen.dart';
+import 'package:emart_app/views/profile_screen/edit_profile_screen.dart';
 import 'package:emart_app/widgets_common/bg_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -29,6 +32,8 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   );
                 } else {
+                  var data = snapshot.data!.docs[0];
+
                   return SafeArea(
                     child: Column(
                       children: [
@@ -40,7 +45,10 @@ class ProfileScreen extends StatelessWidget {
                               child: Icon(
                                 Icons.edit,
                                 color: whiteColor,
-                              )).onTap(() {}),
+                              )).onTap(() {
+                            controller.nameController.text = data['name'];
+                            Get.to(() => EditProfileScreen(data: data));
+                          }),
                         ),
                         //users detail section
 
@@ -48,23 +56,31 @@ class ProfileScreen extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: Row(
                             children: [
-                              Image.asset(imgS1, width: 100, fit: BoxFit.cover)
-                                  .box
-                                  .roundedFull
-                                  .clip(Clip.antiAlias)
-                                  .make(),
+                              data['imageUrl'] == ''
+                                  ? Image.asset(imgS1,
+                                          width: 100, fit: BoxFit.cover)
+                                      .box
+                                      .roundedFull
+                                      .clip(Clip.antiAlias)
+                                      .make()
+                                  : Image.network(data['imageUrl'],
+                                          width: 100, fit: BoxFit.cover)
+                                      .box
+                                      .roundedFull
+                                      .clip(Clip.antiAlias)
+                                      .make(),
                               10.widthBox,
                               Expanded(
                                   child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  "dummy"
+                                  "${data['name']}"
                                       .text
                                       .fontFamily(semibold)
                                       .white
                                       .make(),
                                   5.heightBox,
-                                  "email".text.white.make(),
+                                  "${data['email']}".text.white.make(),
                                 ],
                               )),
                               OutlinedButton(
@@ -98,6 +114,16 @@ class ProfileScreen extends StatelessWidget {
                           itemCount: profileButtonsList.length,
                           itemBuilder: (BuildContext context, int index) {
                             return ListTile(
+                              onTap: () {
+                                switch (index) {
+                                  case 0:
+                                    Get.to(() => const MinelistScreen());
+                                    break;
+                                  case 1:
+                                    Get.to(() => const MessagesScreen());
+                                    break;
+                                }
+                              },
                               leading: Image.asset(
                                 profileButtonsIcon[index],
                                 width: 22,
