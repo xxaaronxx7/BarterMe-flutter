@@ -5,7 +5,6 @@ import 'package:emart_app/controllers/auth_controller.dart';
 import 'package:emart_app/controllers/profile_controller.dart';
 import 'package:emart_app/services/firestore_services.dart';
 import 'package:emart_app/views/auth_screen/login_screen.dart';
-import 'package:emart_app/views/profile_screen/edit_profile_screen.dart';
 import 'package:emart_app/widgets_common/bg_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -30,8 +29,6 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   );
                 } else {
-                  var data = snapshot.data!.docs[0];
-
                   return SafeArea(
                     child: Column(
                       children: [
@@ -43,10 +40,7 @@ class ProfileScreen extends StatelessWidget {
                               child: Icon(
                                 Icons.edit,
                                 color: whiteColor,
-                              )).onTap(() {
-                            controller.nameController.text = data['name'];
-                            Get.to(() => EditProfileScreen(data: data));
-                          }),
+                              )).onTap(() {}),
                         ),
                         //users detail section
 
@@ -54,31 +48,23 @@ class ProfileScreen extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: Row(
                             children: [
-                              data['imageUrl'] == ''
-                                  ? Image.asset(imgS1,
-                                          width: 100, fit: BoxFit.cover)
-                                      .box
-                                      .roundedFull
-                                      .clip(Clip.antiAlias)
-                                      .make()
-                                  : Image.network(data['imageUrl'],
-                                          width: 100, fit: BoxFit.cover)
-                                      .box
-                                      .roundedFull
-                                      .clip(Clip.antiAlias)
-                                      .make(),
+                              Image.asset(imgS1, width: 100, fit: BoxFit.cover)
+                                  .box
+                                  .roundedFull
+                                  .clip(Clip.antiAlias)
+                                  .make(),
                               10.widthBox,
                               Expanded(
                                   child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  "${data['name']}"
+                                  "dummy"
                                       .text
                                       .fontFamily(semibold)
                                       .white
                                       .make(),
                                   5.heightBox,
-                                  "${data['email']}".text.white.make(),
+                                  "email".text.white.make(),
                                 ],
                               )),
                               OutlinedButton(

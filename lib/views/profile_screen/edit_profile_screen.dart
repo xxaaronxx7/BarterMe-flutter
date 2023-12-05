@@ -19,6 +19,7 @@ class EditProfileScreen extends StatelessWidget {
 
     return bgWidget(
         child: Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(),
       body: Obx(
         () => Column(
@@ -104,6 +105,14 @@ class EditProfileScreen extends StatelessWidget {
                               password: controller.newpassController.text,
                             );
                             VxToast.show(context, msg: "Updated");
+                          } else if (controller
+                                  .oldpassController.text.isEmptyOrNull &&
+                              controller.newpassController.text.isEmptyOrNull) {
+                            await controller.updateProfile(
+                              imgUrl: controller.profileImageLink,
+                              name: controller.nameController.text,
+                              password: data['password'],
+                            );
                           } else {
                             VxToast.show(context, msg: "Wrong Old Password");
                             controller.isloading(false);

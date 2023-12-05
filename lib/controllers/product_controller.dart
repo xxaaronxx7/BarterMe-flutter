@@ -1,14 +1,70 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emart_app/consts/consts.dart';
 import 'package:emart_app/models/category_model.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProductController extends GetxController {
   var quantity = 0.obs;
-
   var subcat = [];
   var isFav = false.obs;
+
+  var inameController = TextEditingController();
+  var ilocationController = TextEditingController();
+  var idescController = TextEditingController();
+  var iavailabilityController = TextEditingController();
+  var iquantityController = TextEditingController();
+  var iItemconditionController = TextEditingController();
+
+  var categoryList = <String>[].obs;
+  var subcategoryList = <String>[].obs;
+  List<Category> category = [];
+  var iImagesList = RxList<dynamic>.generate(3, (index) => null);
+
+  var categoryValue = ''.obs;
+  var subcategoryValue = ''.obs;
+
+  getCategories() async {
+    var data = await rootBundle.loadString("lib/services/category_model.json");
+    var cat = categoryModelFromJson(data);
+    category = cat.categories;
+  }
+
+  populateCategoryList() {
+    categoryList.clear();
+
+    for (var item in category) {
+      categoryList.add(item.name);
+    }
+  }
+
+  populateSubcategory(cat) {
+    subcategoryList.clear();
+
+    var data = category.where((element) => element.name == cat).toList();
+
+    for (var i = 0; i < data.first.subcategory.length; i++) {
+      subcategoryList.add(data.first.subcategory[i]);
+    }
+  }
+
+  pickImage(index, context) async {
+    try {
+      final img = await ImagePicker()
+          .pickImage(source: ImageSource.gallery, imageQuality: 80);
+      if (img == null) {
+        return;
+      } else {
+        iImagesList[index] = File(img.path);
+      }
+    } catch (e) {
+      VxToast.show(context, msg: e.toString());
+    }
+  }
 
   getSubCategories(title) async {
     subcat.clear();
@@ -54,22 +110,24 @@ class ProductController extends GetxController {
     quantity.value = 0;
   }
 
-  addToMinelist(docId) async {
+  addToMinelist(docId, context) async {
     await firestore.collection(productsCollection).doc(docId).set({
       'p_minelist': FieldValue.arrayUnion([currentUser!.uid])
     }, SetOptions(merge: true));
     isFav(true);
+    VxToast.show(context, msg: "Added to Minelist");
   }
 
-  removeFromMinelist(docId) async {
+  removeFromMinelist(docId, context) async {
     await firestore.collection(productsCollection).doc(docId).set({
       'p_minelist': FieldValue.arrayRemove([currentUser!.uid])
     }, SetOptions(merge: true));
     isFav(false);
+    VxToast.show(context, msg: "Removed from Minelist");
   }
 
   checkIfFav(data) async {
-    if (data['p_wishlist'.contains(currentUser!.uid)]) {
+    if (data['p_minelist'.contains(currentUser!.uid)]) {
       isFav(true);
     } else {
       isFav(false);

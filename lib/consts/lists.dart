@@ -1,4 +1,5 @@
 import 'package:emart_app/consts/consts.dart';
+import 'package:flutter/material.dart';
 
 const slidersList = [imgSlider1, imgSlider2, imgSlider3, imgSlider4];
 const secondSlidersList = [imgSs1, imgSs2, imgSs3, imgSs4];
@@ -31,5 +32,8 @@ const categoryImages = [
   imgFc9
 ];
 
-const profileButtonsList = [barters, wishList, messages];
-const profileButtonsIcon = [icOrder, icOrder, icMessages];
+const profileButtonsList = [wishList, messages];
+const profileButtonsIcon = [icOrder, icMessages];
+const popupMenuTitles = [edit, remove];
+
+const popMenuIcons = [Icons.edit, Icons.delete];
