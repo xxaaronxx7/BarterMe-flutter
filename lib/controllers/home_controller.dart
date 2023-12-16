@@ -6,6 +6,7 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     getUsername();
+    getSellername();
     super.onInit();
   }
 
@@ -23,5 +24,19 @@ class HomeController extends GetxController {
       username = result.docs.single['name'];
       userId = currentUser!.uid; // Set the user ID here
     }
+  }
+
+  getSellername() async {
+    var result = await firestore
+        .collection(usersCollection)
+        .where('id', isEqualTo: currentUser!.uid)
+        .get()
+        .then((value) {
+      if (value.docs.isNotEmpty) {
+        return value.docs.single['name'];
+      }
+    });
+    username = result;
+    print(username);
   }
 }

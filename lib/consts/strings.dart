@@ -26,7 +26,7 @@ const logout = "Log out";
 
 const signup = "Sign Up";
 
-const createNewAccount = "or, Create a new account";
+const createNewAccount = "Create a new account";
 
 const loginWith = "Log in with";
 
@@ -58,11 +58,14 @@ const searchAnything = "Search anything...",
     topCategory = "Top Categories",
     featuredCategories = "Featured Categories",
     womenDress = "Women's Dress",
-    girlsWatches = "Girls' Watches",
-    mobilePhone = "Mobile Phone",
-    boysGlasses = "Boys' Glasses",
+    watches = "Watches",
+    smartphone = "Smartphone",
+    laptop = "Laptop",
     girlsDress = "Girls' Clothing",
-    tShirts = "T-Shirts";
+    tShirts = "Shirts & Casual wear",
+    techAccessories = "Tech accessories",
+    essentials = "Essentials",
+    necklaceAndBracelets = "Necklace & Bracelets";
 
 //categories strings
 

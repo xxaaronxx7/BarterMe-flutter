@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emart_app/consts/consts.dart';
 import 'package:emart_app/services/firestore_services.dart';
-import 'package:emart_app/views/category_screen/selected_itemdetails.dart';
 import 'package:emart_app/widgets_common/loading_indicator.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class SavedScreen extends StatelessWidget {
   const SavedScreen({super.key});
@@ -12,7 +10,7 @@ class SavedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: whiteColor,
+      backgroundColor: Colors.green.shade100,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title:
@@ -34,38 +32,37 @@ class SavedScreen extends StatelessWidget {
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
-                children: List.generate(
-                    data.length,
-                    (index) => Card(
-                          child: ListTile(
-                            onTap: () {
-                              Get.to(() => SelectedItemDetails(
-                                  title: "${data[index]['title']}",
-                                  data: data[index]));
-                            },
-                            leading: Image.network(
-                              "${data[index]['img']}",
-                              width: 110,
-                              fit: BoxFit.cover,
-                            ),
-                            title: "${data[index]['title']}"
-                                .text
-                                .fontFamily(semibold)
-                                .size(16)
-                                .make(),
-                            subtitle: "${data[index]['itemcondition']}"
-                                .text
-                                .color(redColor)
-                                .fontFamily(semibold)
-                                .make(),
-                            trailing: const Icon(
-                              Icons.delete,
-                              color: redColor,
-                            ).onTap(() {
-                              FirestoreServices.deleteDocument(data[index].id);
-                            }),
-                          ),
-                        )),
+                children: [
+                  Expanded(
+                      child: ListView.builder(
+                          itemCount: data.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return ListTile(
+                              leading: Image.network(
+                                "${data[index]['img']}",
+                                width: 110,
+                                fit: BoxFit.cover,
+                              ),
+                              title: "${data[index]['title']}"
+                                  .text
+                                  .fontFamily(semibold)
+                                  .size(16)
+                                  .make(),
+                              subtitle: "${data[index]['itemcondition']}"
+                                  .text
+                                  .color(redColor)
+                                  .fontFamily(semibold)
+                                  .make(),
+                              trailing: const Icon(
+                                Icons.delete,
+                                color: redColor,
+                              ).onTap(() {
+                                FirestoreServices.deleteDocument(
+                                    data[index].id);
+                              }),
+                            );
+                          })),
+                ],
               ),
             );
           }

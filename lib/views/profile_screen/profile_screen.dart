@@ -32,7 +32,16 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   );
                 } else {
-                  var data = snapshot.data!.docs[0];
+                  var data = snapshot.data!.docs.isNotEmpty
+                      ? snapshot.data!.docs[0]
+                      : null;
+
+                  if (data == null) {
+                    // Handle the case where no data is available
+                    return const Center(
+                      child: Text("No user data available"),
+                    );
+                  }
 
                   return SafeArea(
                     child: Column(

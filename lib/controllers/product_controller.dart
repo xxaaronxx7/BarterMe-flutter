@@ -73,37 +73,61 @@ class ProductController extends GetxController {
 
   uploadImages() async {
     iImagesListLinks.clear();
+
     for (var item in iImagesList) {
       if (item != null) {
-        var filename = basename(item.path);
-        var destination = 'images/users/${currentUser!.uid}/$filename';
-        Reference ref = FirebaseStorage.instance.ref().child(destination);
-        await ref.putFile(item);
-        var n = await ref.getDownloadURL();
-        iImagesListLinks.add(n);
+        try {
+          var filename = basename(item.path);
+          var destination =
+              'images/users/${currentUser?.uid ?? 'unknown'}/$filename';
+          Reference ref = FirebaseStorage.instance.ref().child(destination);
+
+          await ref.putFile(item);
+
+          // Add a delay of 500 milliseconds between uploads
+          await Future.delayed(Duration(milliseconds: 500));
+
+          var downloadUrl = await ref.getDownloadURL();
+          iImagesListLinks.add(downloadUrl);
+        } catch (e) {
+          print('Error uploading image: $e');
+          // Handle the error as needed
+        }
       }
     }
   }
 
-  uploadItem(context) async {
-    var store = firestore.collection(productsCollection).doc();
-    await store.set({
-      'p_category': categoryValue.value,
-      'p_subcatergory': subcategoryValue.value,
-      'p_imgs': FieldValue.arrayUnion(iImagesListLinks),
-      'p_minelist': FieldValue.arrayUnion([]),
-      'p_desc': idescController.text,
-      'p_name': inameController.text,
-      'p_quantity': iquantityController.text,
-      'p_itemcondition': iItemconditionController.text,
-      'p_location': ilocationController.text,
-      'p_availability': iavailabilityController.text,
-      'p_seller': Get.find<HomeController>().userId,
-      'vendor_id': currentUser!.uid,
-    });
-    isLoading(false);
+  uploadItem(BuildContext context) async {
+    try {
+      final storeData = {
+        'p_category': categoryValue.value,
+        'p_subcatergory': subcategoryValue.value,
+        'p_imgs': FieldValue.arrayUnion(iImagesListLinks),
+        'p_minelist': FieldValue.arrayUnion([]),
+        'p_desc': idescController.text,
+        'p_name': inameController.text,
+        'p_quantity': iquantityController.text,
+        'p_itemcondition': iItemconditionController.text,
+        'p_location': ilocationController.text,
+        'p_availability': iavailabilityController.text,
+        'p_seller': Get.find<HomeController>().username,
+        'vendor_id': currentUser!.uid,
+      };
 
-    VxToast.show(context, msg: "Item Uploaded");
+      final storeRef = firestore.collection(productsCollection).doc();
+      await storeRef.set(storeData);
+
+      isLoading(false);
+      VxToast.show(context, msg: "Item Uploaded");
+    } catch (e) {
+      // Handle any error that occurs during the upload process
+      print(e);
+      VxToast.show(context, msg: "Failed to upload item");
+    }
+  }
+
+  removeItem(docId) async {
+    await firestore.collection(productsCollection).doc(docId).delete();
   }
 
   getSubCategories(title) async {
@@ -171,6 +195,67 @@ class ProductController extends GetxController {
       isFav(true);
     } else {
       isFav(false);
+    }
+  }
+
+  getItemDetailsForEdit(String title) async {
+    try {
+      var querySnapshot = await firestore
+          .collection(productsCollection)
+          .where('p_name', isEqualTo: title)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        var data = querySnapshot.docs.first.data();
+
+        // Update controller values for editing
+        inameController.text = data['p_name']?.toString() ?? '';
+        ilocationController.text = data['p_location']?.toString() ?? '';
+        idescController.text = data['p_desc']?.toString() ?? '';
+        iavailabilityController.text = data['p_availability']?.toString() ?? '';
+        iquantityController.text = data['p_quantity']?.toString() ?? '';
+        iItemconditionController.text =
+            data['p_itemcondition']?.toString() ?? '';
+      } else {
+        // Handle the case where no documents are found
+        print('No document found for title: $title');
+      }
+    } catch (e) {
+      print('Error getting item details for edit: $e');
+    }
+  }
+
+  updateItem(BuildContext context, String title) async {
+    try {
+      var querySnapshot = await firestore
+          .collection(productsCollection)
+          .where('p_name', isEqualTo: title)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        var docRef = querySnapshot.docs.first.reference;
+
+        // Update Firestore document using docRef
+        await docRef.update({
+          'p_name': inameController.text,
+          'p_location': ilocationController.text,
+          'p_desc': idescController.text,
+          'p_availability': iavailabilityController.text,
+          'p_quantity': iquantityController.text,
+          'p_itemcondition': iItemconditionController.text
+
+          // Add other fields you want to update
+        });
+
+        isLoading(false);
+        VxToast.show(context, msg: "Item Updated");
+      } else {
+        // Item not found
+        VxToast.show(context, msg: "Item not found");
+      }
+    } catch (e) {
+      print('Error updating item: $e');
+      VxToast.show(context, msg: "Failed to update item");
     }
   }
 }

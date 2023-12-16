@@ -52,14 +52,14 @@ class FirestoreServices {
   }
 
   static getMinelist() {
-    firestore
+    return firestore
         .collection(productsCollection)
         .where('p_minelist', arrayContains: currentUser!.uid)
         .snapshots();
   }
 
-  static getAllMessages() {
-    firestore
+  static getAllMessages(uid) {
+    return firestore
         .collection(chatsCollection)
         .where('fromId', isEqualTo: currentUser!.uid)
         .snapshots();

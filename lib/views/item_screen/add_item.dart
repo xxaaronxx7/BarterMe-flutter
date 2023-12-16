@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class AddProduct extends StatelessWidget {
-  const AddProduct({super.key});
+  AddProduct({super.key});
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class AddProduct extends StatelessWidget {
     return Obx(
       () => Scaffold(
         resizeToAvoidBottomInset: false,
-        backgroundColor: Colors.green.shade400,
+        backgroundColor: Colors.green.shade300,
         appBar: AppBar(
           leading: IconButton(
             onPressed: () {
@@ -33,17 +34,31 @@ class AddProduct extends StatelessWidget {
           actions: [
             controller.isLoading.value
                 ? loadingIndicator()
-                : TextButton(
+                : ElevatedButton(
                         onPressed: () async {
-                          controller.isLoading(true);
-                          await controller.uploadImages();
-                          await controller.uploadItem(context);
-                          Get.back();
+                          if (controller.iImagesList
+                              .any((image) => image != null)) {
+                            if (_formKey.currentState?.validate() ?? false) {
+                              // Form is valid, perform the submission logic
+                              controller.isLoading(true);
+                              controller.uploadItem(context);
+                              controller.uploadImages();
+                              Get.back();
+                            }
+                          } else {
+                            // Show a message indicating that at least one image is required
+                            Get.snackbar(
+                              "Error",
+                              "Please select at least one image.",
+                              backgroundColor: Colors.red,
+                              colorText: Colors.white,
+                            );
+                          }
                         },
                         child: "Save"
                             .text
                             .fontFamily(bold)
-                            .color(whiteColor)
+                            .color(fontGrey)
                             .size(22)
                             .make())
                     .marginOnly(right: 13)
@@ -51,70 +66,115 @@ class AddProduct extends StatelessWidget {
         ),
         body: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                customTextField2(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  customTextField2(
                     hint: "eg. BMW",
                     label: "Item Name : ",
-                    controller: controller.inameController),
-                10.heightBox,
-                customTextField2(
+                    controller: controller.inameController,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter the item name';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  customTextField2(
                     hint: "eg. Carigara, Leyte",
                     label: "Location : ",
-                    controller: controller.ilocationController),
-                10.heightBox,
-                customTextField2(
+                    controller: controller.ilocationController,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter Location';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  customTextField2(
                     hint: "eg. To Barter into other items",
                     label: "Description : ",
                     isDesc: true,
-                    controller: controller.idescController),
-                10.heightBox,
-                customTextField2(
+                    controller: controller.idescController,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter Description';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  customTextField2(
                     hint: "eg. Available/ On Deal/ Pending/ Sold",
                     label: "Is item available? : ",
-                    controller: controller.iavailabilityController),
-                10.heightBox,
-                customTextField2(
+                    controller: controller.iavailabilityController,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please if the item is available/etc.';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  customTextField2(
                     hint: "eg. 1 or above",
                     label: "Quantity : ",
-                    controller: controller.iquantityController),
-                10.heightBox,
-                customTextField2(
+                    controller: controller.iquantityController,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter the item quantity';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  customTextField2(
                     hint: "eg. Used/New/Unused etc.",
                     label: "Item Condition : ",
-                    controller: controller.iItemconditionController),
-                10.heightBox,
-                productDropdown("Category", controller.categoryList,
-                    controller.categoryValue, controller),
-                10.heightBox,
-                productDropdown("Subcategory", controller.subcategoryList,
-                    controller.subcategoryValue, controller),
-                10.heightBox,
-                const Divider(color: whiteColor),
-                normalText(text: "Add image for your item"),
-                10.heightBox,
-                Obx(
-                  () => Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: List.generate(
-                        3,
-                        (index) => controller.iImagesList[index] != null
-                            ? Image.file(
-                                controller.iImagesList[index],
-                                width: 100,
-                              ).onTap(() {
-                                controller.pickImage(index, context);
-                              })
-                            : productImages(label: "${index + 1}").onTap(() {
-                                controller.pickImage(index, context);
-                              })),
+                    controller: controller.iItemconditionController,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter the item condition';
+                      }
+                      return null;
+                    },
                   ),
-                ),
-                5.heightBox,
-                normalText(
-                    text: "First image will be the Display Image",
-                    color: lightGrey),
-              ],
+                  10.heightBox,
+                  productDropdown("Category", controller.categoryList,
+                      controller.categoryValue, controller),
+                  10.heightBox,
+                  productDropdown("Subcategory", controller.subcategoryList,
+                      controller.subcategoryValue, controller),
+                  10.heightBox,
+                  const Divider(color: whiteColor),
+                  normalText(text: "Add image for your item"),
+                  10.heightBox,
+                  Obx(
+                    () => Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: List.generate(
+                          3,
+                          (index) => controller.iImagesList[index] != null
+                              ? Image.file(
+                                  controller.iImagesList[index],
+                                  width: 100,
+                                ).onTap(() {
+                                  controller.pickImage(index, context);
+                                })
+                              : productImages(label: "${index + 1}").onTap(() {
+                                  controller.pickImage(index, context);
+                                })),
+                    ),
+                  ),
+                  5.heightBox,
+                  normalText(
+                      text: "First image will be the Display Image",
+                      color: lightGrey),
+                ],
+              ),
             )),
       ),
     );

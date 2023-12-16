@@ -20,52 +20,52 @@ class MessagesScreen extends StatelessWidget {
         ),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirestoreServices.getAllMessages(),
+        stream: FirestoreServices.getAllMessages(currentUser!.uid),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (!snapshot.hasData) {
             return Center(
               child: loadingIndicator(),
             );
-          } else if (snapshot.hasError) {
+          } else if (snapshot.data!.docs.isEmpty) {
             return Center(
-              child: Text("Error: ${snapshot.error}"),
-            );
-          } else if (snapshot.data?.size == 0) {
-            return Center(
-              child: Text(
-                "No messages yet!",
-                style: TextStyle(color: darkFontGrey),
-              ),
+              child: Text("No messages yet."),
             );
           } else {
-            var data = snapshot.data?.docs;
+            var data = snapshot.data!.docs;
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
                   Expanded(
                     child: ListView.builder(
-                      itemCount: data?.length,
+                      itemCount: data.length,
                       itemBuilder: (BuildContext context, int index) {
-                        var friendName = data?[index].get('friend_name');
-                        var toId = data?[index].get('toId');
-
                         return Card(
                           child: ListTile(
                             onTap: () {
-                              Get.to(() => const ChatScreen(),
-                                  arguments: [friendName, toId]);
+                              Get.to(
+                                () => const ChatScreen(),
+                                arguments: [
+                                  data[index]['friend_name'],
+                                  data[index]['toId'],
+                                  data[index]['fromId']
+                                ],
+                              );
                             },
                             leading: CircleAvatar(
                               backgroundColor: redColor,
                               child: Icon(Icons.person, color: whiteColor),
                             ),
-                            title: Text(
-                              friendName ?? '',
-                              style: TextStyle(
-                                  color: darkFontGrey, fontFamily: semibold),
-                            ),
-                            subtitle: Text(data?[index].get('last_msg') ?? ''),
+                            title: "${data[index]['friend_name']}"
+                                .text
+                                .fontFamily(semibold)
+                                .color(darkFontGrey)
+                                .make(),
+                            subtitle: "${data[index]['last_msg']}"
+                                .text
+                                .fontFamily(semibold)
+                                .color(darkFontGrey)
+                                .make(),
                           ),
                         );
                       },

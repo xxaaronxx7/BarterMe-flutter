@@ -6,7 +6,6 @@ import 'package:emart_app/services/firestore_services.dart';
 import 'package:emart_app/views/category_screen/selected_itemdetails.dart';
 import 'package:emart_app/views/home_screen/components/featured_button.dart';
 import 'package:emart_app/views/home_screen/search_screen.dart';
-import 'package:emart_app/widgets_common/home_buttons.dart';
 import 'package:emart_app/widgets_common/loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,7 +18,7 @@ class HomeScreen extends StatelessWidget {
     var controller = Get.find<HomeController>();
     return Container(
       padding: const EdgeInsets.all(12),
-      color: lightGrey,
+      color: Colors.green.shade300,
       width: context.screenWidth,
       height: context.screenHeight,
       child: SafeArea(
@@ -53,62 +52,8 @@ class HomeScreen extends StatelessWidget {
               physics: const BouncingScrollPhysics(),
               child: Column(
                 children: [
-                  //Swipers' Items
-                  VxSwiper.builder(
-                      aspectRatio: 16 / 9,
-                      autoPlay: true,
-                      height: 150,
-                      enlargeCenterPage: true,
-                      itemCount: slidersList.length,
-                      itemBuilder: (context, index) {
-                        return Image.asset(
-                          slidersList[index],
-                          fit: BoxFit.fill,
-                        )
-                            .box
-                            .rounded
-                            .clip(Clip.antiAlias)
-                            .margin(const EdgeInsets.symmetric(horizontal: 8))
-                            .make();
-                      }),
-
-                  //Deals buttons
-                  10.heightBox,
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: List.generate(
-                        2,
-                        (index) => homeButtons(
-                              height: context.screenHeight * 0.15,
-                              width: context.screenWidth / 2.5,
-                              icon: index == 0 ? icTodaysDeal : icFlashDeal,
-                              title: index == 0 ? todayDeal : topItems,
-                            )),
-                  ),
-
-                  //2nd swiper
-                  20.heightBox,
-
-                  VxSwiper.builder(
-                      aspectRatio: 16 / 9,
-                      autoPlay: true,
-                      height: 150,
-                      enlargeCenterPage: true,
-                      itemCount: secondSlidersList.length,
-                      itemBuilder: (context, index) {
-                        return Image.asset(
-                          secondSlidersList[index],
-                          fit: BoxFit.fill,
-                        )
-                            .box
-                            .rounded
-                            .clip(Clip.antiAlias)
-                            .margin(const EdgeInsets.symmetric(horizontal: 8))
-                            .make();
-                      }),
-
                   //featured categories
-                  20.heightBox,
+                  5.heightBox,
                   Align(
                     alignment: Alignment.centerLeft,
                     child: featuredCategories.text
@@ -136,26 +81,6 @@ class HomeScreen extends StatelessWidget {
                               )).toList(),
                     ),
                   ),
-
-                  //third swiper
-                  20.heightBox,
-                  VxSwiper.builder(
-                      aspectRatio: 16 / 9,
-                      autoPlay: true,
-                      height: 150,
-                      enlargeCenterPage: true,
-                      itemCount: secondSlidersList.length,
-                      itemBuilder: (context, index) {
-                        return Image.asset(
-                          secondSlidersList[index],
-                          fit: BoxFit.fill,
-                        )
-                            .box
-                            .rounded
-                            .clip(Clip.antiAlias)
-                            .margin(const EdgeInsets.symmetric(horizontal: 8))
-                            .make();
-                      }),
 
                   //all items section
                   20.heightBox,
@@ -188,16 +113,22 @@ class HomeScreen extends StatelessWidget {
                                       fit: BoxFit.cover,
                                     ),
                                     const Spacer(),
+                                    2.heightBox,
                                     "${allproducsdata[index]['p_name']}"
                                         .text
                                         .fontFamily(bold)
                                         .color(darkFontGrey)
                                         .size(18)
                                         .make(),
-                                    10.heightBox,
                                     "${allproducsdata[index]['p_itemcondition']}"
                                         .text
                                         .color(redColor)
+                                        .fontFamily(bold)
+                                        .size(12)
+                                        .make(),
+                                    "${allproducsdata[index]['p_location']}"
+                                        .text
+                                        .color(darkFontGrey)
                                         .fontFamily(bold)
                                         .size(16)
                                         .make(),
@@ -209,7 +140,7 @@ class HomeScreen extends StatelessWidget {
                                     .margin(const EdgeInsets.symmetric(
                                         horizontal: 4))
                                     .roundedSM
-                                    .padding(const EdgeInsets.all(12))
+                                    .padding(const EdgeInsets.all(10))
                                     .make()
                                     .onTap(() {
                                   Get.to(() => SelectedItemDetails(

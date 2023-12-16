@@ -24,11 +24,11 @@ class ItemScreen extends StatelessWidget {
           onPressed: () async {
             await controller.getCategories();
             controller.populateCategoryList();
-            Get.to(() => const AddProduct());
+            Get.to(() => AddProduct());
           },
           child: const Icon(Icons.add),
         ),
-        backgroundColor: whiteColor,
+        backgroundColor: Colors.green.shade100,
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: boldText(text: myItems, color: fontGrey, size: 16.0),
@@ -101,7 +101,17 @@ class ItemScreen extends StatelessWidget {
                                                   .color(darkFontGrey)
                                                   .make()
                                             ],
-                                          ).onTap(() {}),
+                                          ).onTap(() async {
+                                            switch (index) {
+                                              case 0:
+                                                controller
+                                                    .removeItem(data[index].id);
+                                                VxToast.show(context,
+                                                    msg: "Item removed");
+                                                break;
+                                              default:
+                                            }
+                                          }),
                                         ),
                                       ),
                                     ).box.white.width(120).roundedSM.make(),

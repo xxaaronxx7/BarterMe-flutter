@@ -95,7 +95,7 @@ class _SelectedCategoryState extends State<SelectedCategory> {
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 2,
-                                mainAxisExtent: 250,
+                                mainAxisExtent: 260,
                                 mainAxisSpacing: 8,
                                 crossAxisSpacing: 8),
                         itemBuilder: (context, index) {
@@ -119,6 +119,12 @@ class _SelectedCategoryState extends State<SelectedCategory> {
                                   .text
                                   .fontFamily(bold)
                                   .color(redColor)
+                                  .size(14)
+                                  .make(),
+                              "${data[index]['p_location']}"
+                                  .text
+                                  .fontFamily(bold)
+                                  .color(redColor)
                                   .size(16)
                                   .make(),
                             ],
@@ -128,7 +134,7 @@ class _SelectedCategoryState extends State<SelectedCategory> {
                               .margin(const EdgeInsets.symmetric(horizontal: 4))
                               .roundedSM
                               .outerShadowMd
-                              .padding(const EdgeInsets.all(12))
+                              .padding(const EdgeInsets.all(10))
                               .make()
                               .onTap(() {
                             controller.checkIfFav(data[index]);

@@ -24,7 +24,11 @@ class MinelistScreen extends StatelessWidget {
             return Center(
               child: loadingIndicator(),
             );
-          } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text("Error: ${snapshot.error}"),
+            );
+          } else if (snapshot.data!.docs.isEmpty) {
             return Center(
               child: Text(
                 "No Items on Minelist yet!",
@@ -33,44 +37,49 @@ class MinelistScreen extends StatelessWidget {
             );
           } else {
             var data = snapshot.data!.docs;
-            return ListView.builder(
-              shrinkWrap: true,
-              itemCount: data.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  leading: Image.network(
-                    "${data[index]['p_imgs'][0]}",
-                    width: 110,
-                    fit: BoxFit.cover,
-                  ),
-                  title: Text(
-                    "${data[index]['p_name']}",
-                    style: TextStyle(
-                      fontFamily: semibold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  subtitle: Text(
-                    "${data[index]['p_itemcondition']}",
-                    style: TextStyle(
-                      color: redColor,
-                      fontFamily: semibold,
-                    ),
-                  ),
-                  trailing: Icon(
-                    Icons.favorite,
-                    color: redColor,
-                  ).onTap(() async {
-                    await firestore
-                        .collection(productsCollection)
-                        .doc(data[index].id)
-                        .set({
-                      'p_minelist': FieldValue.arrayRemove([currentUser!.uid])
-                    }, SetOptions(merge: true));
-                  }),
-                );
-              },
-            );
+            return Column(children: [
+              Expanded(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: data.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ListTile(
+                      leading: Image.network(
+                        "${data[index]['p_imgs'][0]}",
+                        width: 110,
+                        fit: BoxFit.cover,
+                      ),
+                      title: Text(
+                        "${data[index]['p_name']}",
+                        style: TextStyle(
+                          fontFamily: semibold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      subtitle: Text(
+                        "${data[index]['p_itemcondition']}",
+                        style: TextStyle(
+                          color: redColor,
+                          fontFamily: semibold,
+                        ),
+                      ),
+                      trailing: Icon(
+                        Icons.favorite,
+                        color: redColor,
+                      ).onTap(() async {
+                        await firestore
+                            .collection(productsCollection)
+                            .doc(data[index].id)
+                            .set({
+                          'p_minelist':
+                              FieldValue.arrayRemove([currentUser!.uid])
+                        }, SetOptions(merge: true));
+                      }),
+                    );
+                  },
+                ),
+              ),
+            ]);
           }
         },
       ),
