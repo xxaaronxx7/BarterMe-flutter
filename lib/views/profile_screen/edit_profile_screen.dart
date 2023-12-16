@@ -19,6 +19,7 @@ class EditProfileScreen extends StatelessWidget {
 
     return bgWidget(
         child: Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(),
       body: Obx(
         () => Column(
@@ -90,24 +91,35 @@ class EditProfileScreen extends StatelessWidget {
                             controller.profileImageLink = data['imageUrl'];
                           }
 
-                          //if old pass match database
-                          if (data['password'] ==
-                              controller.oldpassController.text) {
-                            controller.changeAuthPassword(
-                              email: data['email'],
-                              password: controller.oldpassController.text,
-                              newpassword: controller.newpassController.text,
-                            );
-                            await controller.updateProfile(
-                              imgUrl: controller.profileImageLink,
-                              name: controller.nameController.text,
-                              password: controller.newpassController.text,
-                            );
-                            VxToast.show(context, msg: "Updated");
-                          } else {
-                            VxToast.show(context, msg: "Wrong Old Password");
-                            controller.isloading(false);
+                          // Check if the new password is provided and not empty
+                          if (controller.newpassController.text.isNotEmpty) {
+                            //if old pass match database
+                            if (data['password'] ==
+                                controller.oldpassController.text) {
+                              controller.changeAuthPassword(
+                                email: data['email'],
+                                password: controller.oldpassController.text,
+                                newpassword: controller.newpassController.text,
+                              );
+                            } else {
+                              VxToast.show(context, msg: "Wrong Old Password");
+                              controller.isloading(false);
+                              return; // Stop further execution if the old password is incorrect
+                            }
                           }
+
+                          // Update profile information
+                          await controller.updateProfile(
+                            imgUrl: controller.profileImageLink,
+                            name: controller.nameController.text,
+                            // Use the new password if provided, otherwise use the existing password
+                            password:
+                                controller.newpassController.text.isNotEmpty
+                                    ? controller.newpassController.text
+                                    : data['password'],
+                          );
+
+                          VxToast.show(context, msg: "Updated");
                         },
                         textColor: whiteColor,
                         title: "Save"),

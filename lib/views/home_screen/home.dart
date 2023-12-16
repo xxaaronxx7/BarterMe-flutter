@@ -2,6 +2,7 @@ import 'package:emart_app/consts/consts.dart';
 import 'package:emart_app/controllers/home_controller.dart';
 import 'package:emart_app/views/category_screen/category_screen.dart';
 import 'package:emart_app/views/home_screen/home_screen.dart';
+import 'package:emart_app/views/item_screen/item_screen.dart';
 import 'package:emart_app/views/profile_screen/profile_screen.dart';
 import 'package:emart_app/views/saved_screen/saved_screen.dart';
 import 'package:emart_app/widgets_common/exit_dialog.dart';
@@ -21,6 +22,8 @@ class Home extends StatelessWidget {
       BottomNavigationBarItem(
           icon: Image.asset(icCategories, width: 26), label: categories),
       BottomNavigationBarItem(
+          icon: Image.asset(icPlus, width: 26), label: myItems),
+      BottomNavigationBarItem(
           icon: Image.asset(icCart, width: 26), label: saved),
       BottomNavigationBarItem(
           icon: Image.asset(icProfile, width: 26), label: account)
@@ -29,6 +32,7 @@ class Home extends StatelessWidget {
     var navBody = [
       const HomeScreen(),
       const CategoryScreen(),
+      const ItemScreen(),
       const SavedScreen(),
       const ProfileScreen(),
     ];

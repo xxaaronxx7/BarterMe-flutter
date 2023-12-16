@@ -13,7 +13,7 @@ class SelectedItemDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var controller = Get.find<ProductController>();
+    var controller = Get.put(ProductController());
     return WillPopScope(
       onWillPop: () async {
         controller.resetValues();
@@ -35,9 +35,9 @@ class SelectedItemDetails extends StatelessWidget {
               () => IconButton(
                   onPressed: () {
                     if (controller.isFav.value) {
-                      controller.removeFromMinelist(data.id);
+                      controller.removeFromMinelist(data.id, context);
                     } else {
-                      controller.addToMinelist(data.id);
+                      controller.addToMinelist(data.id, context);
                     }
                   },
                   icon: Icon(

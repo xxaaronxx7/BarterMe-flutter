@@ -10,7 +10,7 @@ class SavedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: whiteColor,
+      backgroundColor: Colors.green.shade100,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title:
@@ -38,7 +38,11 @@ class SavedScreen extends StatelessWidget {
                           itemCount: data.length,
                           itemBuilder: (BuildContext context, int index) {
                             return ListTile(
-                              leading: Image.network("${data[index]['img']}"),
+                              leading: Image.network(
+                                "${data[index]['img']}",
+                                width: 110,
+                                fit: BoxFit.cover,
+                              ),
                               title: "${data[index]['title']}"
                                   .text
                                   .fontFamily(semibold)

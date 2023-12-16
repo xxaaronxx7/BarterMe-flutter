@@ -51,9 +51,6 @@ class AuthController extends GetxController {
       'email': email,
       'imageUrl': '',
       'id': currentUser!.uid,
-      'save_count': "00",
-      'minelist_count': "00",
-      'barter_count': "00",
     });
   }
 
