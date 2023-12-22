@@ -11,6 +11,9 @@ import 'package:emart_app/views/profile_screen/edit_profile_screen.dart';
 import 'package:emart_app/widgets_common/bg_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
+import '../auth_screen/components/gsignin_service.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -22,7 +25,7 @@ class ProfileScreen extends StatelessWidget {
     return bgWidget(
       child: Scaffold(
           body: StreamBuilder(
-              stream: FirestoreServices.getUser(currentUser!.uid),
+              stream: FirestoreServices.getUser(currentUser?.uid),
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (!snapshot.hasData) {
@@ -38,8 +41,14 @@ class ProfileScreen extends StatelessWidget {
 
                   if (data == null) {
                     // Handle the case where no data is available
-                    return const Center(
-                      child: Text("No user data available"),
+                    return Center(
+                      child: InkWell(
+                          onTap: () async {
+                            await Get.put(AuthController())
+                                .signoutMethod(context);
+                            Get.offAll(() => const LoginScreen());
+                          },
+                          child: Text("No user data available")),
                     );
                   }
 
@@ -100,7 +109,13 @@ class ProfileScreen extends StatelessWidget {
                                 onPressed: () async {
                                   await Get.put(AuthController())
                                       .signoutMethod(context);
-                                  Get.offAll(() => const LoginScreen());
+
+                                  GSignInService().signOut();
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => LoginScreen()),
+                                  );
                                 },
                                 child: logout.text
                                     .fontFamily(semibold)

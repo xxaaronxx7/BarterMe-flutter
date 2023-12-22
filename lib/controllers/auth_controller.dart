@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emart_app/consts/consts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -21,11 +22,31 @@ class AuthController extends GetxController {
           email: emailController.text, password: passwordController.text);
     } on FirebaseAuthException catch (e) {
       VxToast.show(context, msg: e.toString());
+      // print(e);
+
+      if (e.toString().contains('interrupted connection or unreachable host')) {
+        showCupertinoDialog<String>(
+          context: context,
+          builder: (BuildContext context) => CupertinoAlertDialog(
+            title: const Text('No Connection'),
+            content: const Text('Please check your internet connectivity'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () async {
+                  Navigator.pop(context);
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
     }
     return userCredential;
   }
+  //////////////////////
 
-  Future<UserCredential?> signupMethod({email, password, context}) async {
+  Future<UserCredential?> signupMethod({email, password, context, name}) async {
     UserCredential? userCredential;
 
     try {
@@ -39,10 +60,7 @@ class AuthController extends GetxController {
   }
 
 //storing data method
-  storeUserData(
-      {required String email,
-      required String password,
-      required String name}) async {
+  storeUserData({String? email, String? password, String? name}) async {
     DocumentReference store =
         firestore.collection(usersCollection).doc(currentUser!.uid);
     store.set({

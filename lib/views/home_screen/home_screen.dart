@@ -147,6 +147,8 @@ class HomeScreen extends StatelessWidget {
                                         title:
                                             "${allproducsdata[index]['p_name']}",
                                         data: allproducsdata[index],
+                                        vendorId: allproducsdata[index]
+                                            ['vendor_id'],
                                       ));
                                 });
                               });

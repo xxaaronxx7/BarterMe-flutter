@@ -17,7 +17,7 @@ class HomeController extends GetxController {
   getUsername() async {
     var result = await firestore
         .collection(usersCollection)
-        .where('id', isEqualTo: currentUser!.uid)
+        .where('id', isEqualTo: currentUser?.uid)
         .get();
 
     if (result.docs.isNotEmpty) {
@@ -29,7 +29,7 @@ class HomeController extends GetxController {
   getSellername() async {
     var result = await firestore
         .collection(usersCollection)
-        .where('id', isEqualTo: currentUser!.uid)
+        .where('id', isEqualTo: currentUser?.uid)
         .get()
         .then((value) {
       if (value.docs.isNotEmpty) {

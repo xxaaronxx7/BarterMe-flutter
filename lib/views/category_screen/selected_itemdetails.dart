@@ -5,11 +5,40 @@ import 'package:emart_app/widgets_common/our_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class SelectedItemDetails extends StatelessWidget {
+class SelectedItemDetails extends StatefulWidget {
   final String? title;
+  final vendorId;
   final dynamic data;
-  const SelectedItemDetails({Key? key, required this.title, this.data})
+  const SelectedItemDetails(
+      {Key? key, required this.title, this.data, this.vendorId})
       : super(key: key);
+
+  @override
+  State<SelectedItemDetails> createState() => _SelectedItemDetailsState();
+}
+
+class _SelectedItemDetailsState extends State<SelectedItemDetails> {
+  @override
+  void initState() {
+    super.initState();
+    getUserId();
+  }
+
+  var id = '';
+
+  getUserId() async {
+    var result = await firestore
+        .collection(usersCollection)
+        .where('id', isEqualTo: currentUser?.uid)
+        .get();
+
+    if (result.docs.isNotEmpty) {
+      setState(() {
+        id = result.docs.single['id'];
+      });
+      print(id);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,15 +58,15 @@ class SelectedItemDetails extends StatelessWidget {
             },
             icon: const Icon(Icons.arrow_back),
           ),
-          title: title!.text.color(darkFontGrey).fontFamily(bold).make(),
+          title: widget.title!.text.color(darkFontGrey).fontFamily(bold).make(),
           actions: [
             Obx(
               () => IconButton(
                   onPressed: () {
                     if (controller.isFav.value) {
-                      controller.removeFromMinelist(data.id, context);
+                      controller.removeFromMinelist(widget.data.id, context);
                     } else {
-                      controller.addToMinelist(data.id, context);
+                      controller.addToMinelist(widget.data.id, context);
                     }
                   },
                   icon: Icon(
@@ -58,7 +87,7 @@ class SelectedItemDetails extends StatelessWidget {
                   children: [
                     10.heightBox,
                     //title and details
-                    title!.text
+                    widget.title!.text
                         .size(21)
                         .color(darkFontGrey)
                         .fontFamily(semibold)
@@ -74,7 +103,7 @@ class SelectedItemDetails extends StatelessWidget {
                     //   stepInt: true),
 
                     10.heightBox,
-                    "${data['p_availability']}"
+                    "${widget.data['p_availability']}"
                         .text
                         .color(golden)
                         .fontFamily(bold)
@@ -92,7 +121,7 @@ class SelectedItemDetails extends StatelessWidget {
                           children: [
                             "Seller".text.white.fontFamily(semibold).make(),
                             5.heightBox,
-                            "${data['p_seller']}"
+                            "${widget.data['p_seller']}"
                                 .text
                                 .fontFamily(semibold)
                                 .color(darkFontGrey)
@@ -100,19 +129,23 @@ class SelectedItemDetails extends StatelessWidget {
                                 .make(),
                           ],
                         )),
-                        const CircleAvatar(
-                          backgroundColor: Colors.white,
-                          child: Icon(
-                            Icons.message_rounded,
-                            color: blue,
-                            size: 35,
-                          ),
-                        ).onTap(() {
-                          Get.to(
-                            const ChatScreen(),
-                            arguments: [data['p_seller'], data['vendor_id']],
-                          );
-                        })
+                        if (id != widget.data['vendor_id'])
+                          CircleAvatar(
+                            backgroundColor: Colors.white,
+                            child: Icon(
+                              Icons.message_rounded,
+                              color: blue,
+                              size: 35,
+                            ),
+                          ).onTap(() {
+                            Get.to(
+                              const ChatScreen(),
+                              arguments: [
+                                widget.data['p_seller'],
+                                widget.data['vendor_id']
+                              ],
+                            );
+                          })
                       ],
                     )
                         .box
@@ -149,12 +182,12 @@ class SelectedItemDetails extends StatelessWidget {
                                       .make(),
                                   IconButton(
                                       onPressed: () {
-                                        controller.increaseQuantity(
-                                            int.parse(data['p_quantity']));
+                                        controller.increaseQuantity(int.parse(
+                                            widget.data['p_quantity']));
                                       },
                                       icon: const Icon(Icons.add)),
                                   10.widthBox,
-                                  "(${data['p_quantity']} available)"
+                                  "(${widget.data['p_quantity']} available)"
                                       .text
                                       .color(textfieldGrey)
                                       .make(),
@@ -175,7 +208,7 @@ class SelectedItemDetails extends StatelessWidget {
                         .fontFamily(bold)
                         .make(),
                     10.heightBox,
-                    "${data['p_location']}"
+                    "${widget.data['p_location']}"
                         .text
                         .color(fontGrey)
                         .size(17)
@@ -189,7 +222,7 @@ class SelectedItemDetails extends StatelessWidget {
                         .fontFamily(bold)
                         .make(),
                     10.heightBox,
-                    "   ${data['p_desc']}"
+                    "   ${widget.data['p_desc']}"
                         .text
                         .color(redOrange)
                         .size(17)
@@ -204,7 +237,7 @@ class SelectedItemDetails extends StatelessWidget {
                         .fontFamily(bold)
                         .make(),
                     10.heightBox,
-                    "${data['p_itemcondition']}"
+                    "${widget.data['p_itemcondition']}"
                         .text
                         .color(fontGrey)
                         .size(16)
@@ -215,11 +248,11 @@ class SelectedItemDetails extends StatelessWidget {
                         autoPlay: true,
                         height: 350,
                         aspectRatio: 16 / 9,
-                        itemCount: data['p_imgs'].length,
+                        itemCount: widget.data['p_imgs'].length,
                         viewportFraction: .95,
                         itemBuilder: (context, index) {
                           return Image.network(
-                            data["p_imgs"][index],
+                            widget.data["p_imgs"][index],
                             width: double.infinity,
                             fit: BoxFit.cover,
                           );
@@ -229,24 +262,31 @@ class SelectedItemDetails extends StatelessWidget {
                 ),
               ),
             )),
-            SizedBox(
-              width: double.infinity,
-              height: 60,
-              child: ourButton(
-                  color: redColor,
-                  onPress: () {
-                    controller.addToSave(
-                        context: context,
-                        img: data['p_imgs'][0],
-                        qty: controller.quantity.value,
-                        sellername: data['p_seller'],
-                        title: data['p_name'],
-                        itemcondition: data['p_itemcondition']);
-                    VxToast.show(context, msg: "Saved");
-                  },
-                  textColor: whiteColor,
-                  title: "Save Item"),
-            ),
+            if (id != widget.data['vendor_id'])
+              SizedBox(
+                width: double.infinity,
+                height: 60,
+                child: ourButton(
+                    color: redColor,
+                    onPress: () {
+                      controller.addToSave(
+                          context: context,
+                          img: widget.data['p_imgs'][0],
+                          qty: controller.quantity.value,
+                          sellername: widget.data['p_seller'],
+                          title: widget.data['p_name'],
+                          secondImg: widget.data['p_imgs'][1],
+                          thirdImg: widget.data['p_imgs'][2],
+                          location: widget.data['p_location'],
+                          availability: widget.data['p_availability'],
+                          desc: widget.data['p_desc'],
+                          itemcondition: widget.data['p_itemcondition'],
+                          vendorId: widget.data['vendor_id']);
+                      VxToast.show(context, msg: "Saved");
+                    },
+                    textColor: whiteColor,
+                    title: "Save Item"),
+              ),
             5.heightBox
           ],
         ),

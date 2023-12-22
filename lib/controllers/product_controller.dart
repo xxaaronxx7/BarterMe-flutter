@@ -23,6 +23,8 @@ class ProductController extends GetxController {
   var iavailabilityController = TextEditingController();
   var iquantityController = TextEditingController();
   var iItemconditionController = TextEditingController();
+  String availability = 'Available';
+  String condition = 'Good Condition';
 
   var categoryList = <String>[].obs;
   var subcategoryList = <String>[].obs;
@@ -71,7 +73,7 @@ class ProductController extends GetxController {
     }
   }
 
-  uploadImages() async {
+  uploadImages(BuildContext context) async {
     iImagesListLinks.clear();
 
     for (var item in iImagesList) {
@@ -95,6 +97,8 @@ class ProductController extends GetxController {
         }
       }
     }
+
+    uploadItem(context);
   }
 
   uploadItem(BuildContext context) async {
@@ -107,9 +111,9 @@ class ProductController extends GetxController {
         'p_desc': idescController.text,
         'p_name': inameController.text,
         'p_quantity': iquantityController.text,
-        'p_itemcondition': iItemconditionController.text,
+        'p_itemcondition': condition,
         'p_location': ilocationController.text,
-        'p_availability': iavailabilityController.text,
+        'p_availability': availability,
         'p_seller': Get.find<HomeController>().username,
         'vendor_id': currentUser!.uid,
       };
@@ -157,13 +161,31 @@ class ProductController extends GetxController {
     }
   }
 
-  addToSave({title, img, sellername, qty, itemcondition, context}) async {
+  addToSave(
+      {title,
+      img,
+      secondImg,
+      thirdImg,
+      location,
+      availability,
+      desc,
+      sellername,
+      qty,
+      itemcondition,
+      vendorId,
+      context}) async {
     await firestore.collection(saveCollection).doc().set({
       'title': title,
+      'availability': availability,
       'img': img,
+      'secondImg': secondImg,
+      'thirdImg': thirdImg,
       'sellername': sellername,
       'qty': qty,
+      'location': location,
+      'desc': desc,
       'itemcondition': itemcondition,
+      'vendorId': vendorId,
       'added_by': currentUser!.uid
     }).catchError((error) {
       VxToast.show(context, msg: error.toString());

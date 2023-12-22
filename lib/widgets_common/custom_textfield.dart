@@ -6,6 +6,7 @@ Widget customTextField(
     String? hint,
     String? Function(String?)? validator,
     controller,
+    suffixIcon,
     isPass}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -17,6 +18,7 @@ Widget customTextField(
         obscureText: isPass,
         controller: controller,
         decoration: InputDecoration(
+          suffixIcon: suffixIcon ?? null,
           hintStyle: const TextStyle(
             fontFamily: semibold,
             color: textfieldGrey,
